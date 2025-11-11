@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "effective_at": "2025-10-01T00:00:00Z",
+  "discount_guardrails": {
+    "default_max_discount_percent": 25,
+    "risk_overrides": {
+      "low": 30,
+      "medium": 20,
+      "high": 10
+    },
+    "requires_executive_approval_above": 20
+  },
+  "payment_terms_guardrails": {
+    "max_terms_days": 45,
+    "requires_finance_review_above_days": 30
+  },
+  "price_floor": {
+    "currency": "USD",
+    "min_amount": 5000
+  }
+}

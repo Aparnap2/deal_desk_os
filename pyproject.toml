@@ -1,0 +1,56 @@
+[project]
+name = "deal-desk-os-server"
+version = "0.1.0"
+description = "Deal Desk OS backend services"
+requires-python = ">=3.10"
+authors = [{ name = "Deal Desk Team", email = "team@example.com" }]
+dependencies = [
+    "fastapi>=0.110,<0.120",
+    "uvicorn[standard]>=0.27,<0.29",
+    "sqlalchemy>=2.0,<2.1",
+    "alembic>=1.13,<2",
+    "pydantic>=2.7,<3",
+    "pydantic-settings>=2.2,<3",
+    "psycopg[binary]>=3.1,<3.2",
+    "asyncpg>=0.29,<0.30",
+    "passlib[bcrypt]>=1.7,<2",
+    "python-jose[cryptography]>=3.3,<4",
+    "redis>=5.0,<6",
+    "structlog>=24.1",
+    "httpx>=0.27,<0.28",
+    "aiohttp>=3.9,<4.0",
+    "orjson>=3.10,<4",
+    "stripe[async]>=13.0,<14"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3,<9",
+    "pytest-asyncio>=0.23,<0.24",
+    "httpx[http2]>=0.27,<0.28",
+    "ruff>=0.5,<0.6",
+    "mypy>=1.10,<1.11"
+]
+
+[build-system]
+requires = ["setuptools>=67", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["server"]
+include = ["app*", "tests*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "-ra"
+pythonpath = ["server"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = ["client"]

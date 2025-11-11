@@ -1,0 +1,117 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+database.db
+logs/
+*.log
+
+# IDE and editor files
+.vscode/
+.idea/
+*.iml
+*.ipr
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+
+# Test artifacts and coverage
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+/server/.mypy_cache/
+/server/.pytest_cache/
+test-results/
+coverage.xml
+.tox/
+.nox/
+
+# Frontend build artifacts
+/client/node_modules/
+/client/dist/
+/client/.turbo/
+/client/.pnpm-store/
+
+# Deal Desk OS specific
+uploads/
+documents/
+signed_documents/
+temp_uploads/
+export/
+invoices/
+audit_logs/
+monitoring/
+secrets/
+keys/
+credentials/
+
+# Docker and Kubernetes
+.dockerignore
+*.kubeconfig
+
+# Secrets and certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Node.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
