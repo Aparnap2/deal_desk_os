@@ -18,6 +18,8 @@ class AuditCategory(str, Enum):
     PAYMENT = "payment"
     STATE_TRANSITION = "state_transition"
     SYSTEM = "system"
+    INVOICE = "invoice"
+    ACCOUNTING = "accounting"
 
 
 class AuditLog(TimestampMixin, Base):
@@ -25,6 +27,8 @@ class AuditLog(TimestampMixin, Base):
 
     id: Mapped[Identifier]
     deal_id: Mapped[str | None] = mapped_column(ForeignKey("deals.id", ondelete="CASCADE"), nullable=True, index=True)
+    invoice_id: Mapped[str | None] = mapped_column(ForeignKey("invoices.id", ondelete="CASCADE"), nullable=True, index=True)
+    staged_invoice_id: Mapped[str | None] = mapped_column(ForeignKey("invoice_staging.id", ondelete="CASCADE"), nullable=True, index=True)
     actor: Mapped[str] = mapped_column(String(80), nullable=False, default="system")
     action: Mapped[str] = mapped_column(String(120), nullable=False)
     category: Mapped[AuditCategory] = mapped_column(SAEnum(AuditCategory), nullable=False)
@@ -32,3 +36,5 @@ class AuditLog(TimestampMixin, Base):
     critical: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     deal: Mapped["Deal | None"] = relationship(back_populates="audit_logs")
+    invoice: Mapped["Invoice | None"] = relationship(back_populates="audit_logs")
+    staged_invoice: Mapped["InvoiceStaging | None"] = relationship(back_populates="audit_logs")

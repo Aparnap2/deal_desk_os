@@ -16,6 +16,7 @@ export type DealFilters = z.infer<typeof DealFiltersSchema>
 
 const buildQueryString = (filters: DealFilters) => {
   const params = new URLSearchParams()
+  
   params.set('page', String(filters.page ?? 1))
   params.set('page_size', String(filters.pageSize ?? 20))
   if (filters.search) params.set('search', filters.search)

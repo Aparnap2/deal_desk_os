@@ -18,6 +18,7 @@ from .base import (
     WorkflowExecution,
     WebhookError,
 )
+from .adapter import N8nWorkflowAdapter
 
 __all__ = [
     "WebhookHandler",
@@ -31,4 +32,5 @@ __all__ = [
     "WebhookResult",
     "WorkflowExecution",
     "WebhookError",
+    "N8nWorkflowAdapter",
 ]

@@ -74,9 +74,15 @@ class Deal(TimestampMixin, Base):
     esign_envelope_id: Mapped[str | None] = mapped_column(String(120), nullable=True)
     guardrail_locked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
+    # Invoice tracking
+    invoice_generated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_invoiced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
     owner: Mapped["User | None"] = relationship(back_populates="owned_deals")
     approvals: Mapped[list["Approval"]] = relationship(back_populates="deal", cascade="all,delete-orphan")
     documents: Mapped[list["DealDocument"]] = relationship(back_populates="deal", cascade="all,delete-orphan")
     payments: Mapped[list["Payment"]] = relationship(back_populates="deal", cascade="all,delete-orphan")
     events: Mapped[list["EventOutbox"]] = relationship(back_populates="deal", cascade="all,delete-orphan")
     audit_logs: Mapped[list["AuditLog"]] = relationship(back_populates="deal", cascade="all,delete-orphan")
+    staged_invoices: Mapped[list["InvoiceStaging"]] = relationship(back_populates="deal", cascade="all,delete-orphan")
+    invoices: Mapped[list["Invoice"]] = relationship(back_populates="deal", cascade="all,delete-orphan")

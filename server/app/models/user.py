@@ -20,6 +20,7 @@ class UserRole(str, Enum):
     FINANCE = "finance"
     EXECUTIVE = "executive"
     ADMIN = "admin"
+    REVOPS_ADMIN = "revops_admin"
 
 
 class User(TimestampMixin, Base):
@@ -34,3 +35,7 @@ class User(TimestampMixin, Base):
 
     owned_deals: Mapped[list["Deal"]] = relationship(back_populates="owner", cascade="all,delete")
     approvals: Mapped[list["Approval"]] = relationship(back_populates="approver", cascade="all,delete")
+
+    # Policy management relationships
+    created_policies: Mapped[list["Policy"]] = relationship("Policy", back_populates="created_by", foreign_keys="Policy.created_by_id")
+    approved_policies: Mapped[list["Policy"]] = relationship("Policy", back_populates="approved_by", foreign_keys="Policy.approved_by_id")

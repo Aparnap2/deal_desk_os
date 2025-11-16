@@ -4,17 +4,73 @@ import json
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.models.deal import Deal, DealRisk, DealStage, GuardrailStatus
+from app.models.policy import Policy, PolicyStatus, PolicyType
+from app.services.policy_service import PolicyService
 
 POLICY_PATH = Path(__file__).resolve().parents[3] / "shared" / "policies" / "pricing_policy_v1.json"
+
+# Global service instance - will be initialized when needed
+_policy_service: Optional[PolicyService] = None
+_db_session: Optional[Session] = None
+
+
+def initialize_policy_service(db: Session) -> None:
+    """Initialize the policy service with a database session"""
+    global _policy_service, _db_session
+    _db_session = db
+    _policy_service = PolicyService(db)
 
 
 @lru_cache
 def load_pricing_policy() -> dict[str, Any]:
-    with POLICY_PATH.open(encoding="utf-8") as handle:
-        return json.load(handle)
+    """Load pricing policy - tries database first, falls back to JSON"""
+    if _policy_service and _db_session:
+        # Try to get active pricing policies from database
+        try:
+            active_policies = _policy_service.get_policies(
+                policy_type=PolicyType.PRICING, status=PolicyStatus.ACTIVE
+            )
+            if active_policies:
+                # Combine multiple policies if needed
+                # For now, use the highest priority active policy
+                policy = max(active_policies, key=lambda p: p.priority)
+                return {
+                    "version": policy.version,
+                    "effective_at": policy.effective_at.isoformat() if policy.effective_at else None,
+                    "discount_guardrails": policy.configuration.get("discount_guardrails", {}),
+                    "payment_terms_guardrails": policy.configuration.get("payment_terms_guardrails", {}),
+                    "price_floor": policy.configuration.get("price_floor", {}),
+                }
+        except Exception:
+            # Fall back to JSON if database access fails
+            pass
+
+    # Fallback to JSON file
+    if POLICY_PATH.exists():
+        with POLICY_PATH.open(encoding="utf-8") as handle:
+            return json.load(handle)
+
+    # Default fallback configuration
+    return {
+        "version": "1.0.0",
+        "effective_at": "2025-01-01T00:00:00Z",
+        "discount_guardrails": {
+            "default_max_discount_percent": 25,
+            "risk_overrides": {"low": 30, "medium": 20, "high": 10},
+            "requires_executive_approval_above": 20,
+        },
+        "payment_terms_guardrails": {
+            "max_terms_days": 45,
+            "requires_finance_review_above_days": 30,
+        },
+        "price_floor": {"currency": "USD", "min_amount": 5000},
+    }
 
 
 @dataclass(slots=True)

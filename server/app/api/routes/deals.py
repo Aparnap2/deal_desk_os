@@ -20,8 +20,8 @@ Pagination = Annotated[int, Query(ge=1)]
 
 @router.get("", response_model=DealCollection)
 async def list_deals_endpoint(
-    page: Pagination = 1,
-    page_size: Pagination = Query(default=20, le=100),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, le=100, ge=1),
     search: str | None = Query(default=None, min_length=2),
     stage: DealStage | None = None,
     owner_id: str | None = None,

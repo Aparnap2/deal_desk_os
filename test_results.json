@@ -1,0 +1,29 @@
+{
+  "postgresql": {
+    "status": "PASS",
+    "response_time": 1763184031.191321
+  },
+  "redis": {
+    "status": "PASS",
+    "response_time": 0.0010912418365478516
+  },
+  "api_health": {
+    "status": "PASS",
+    "response_time": 0.0014307498931884766
+  },
+  "api_docs": {
+    "status": "PASS"
+  },
+  "document_intake": {
+    "status": "PASS",
+    "document_id": "788d2d88-cda2-4802-81c9-98f81cb481a4"
+  },
+  "field_extraction": {
+    "status": "PASS",
+    "fields_count": 5
+  },
+  "validation": {
+    "status": "PASS",
+    "score": 0.87
+  }
+}
