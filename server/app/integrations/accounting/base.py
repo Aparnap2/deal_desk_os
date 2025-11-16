@@ -195,9 +195,9 @@ class InvoiceStatusResult:
 class PaymentResult:
     """Result of payment application operation."""
     success: bool
-    payment_id: Optional[str] = None
     invoice_id: str
     amount: Decimal
+    payment_id: Optional[str] = None
     applied_at: Optional[datetime] = None
     remaining_balance: Optional[Decimal] = None
     status: Optional[str] = None

@@ -28,7 +28,7 @@ from app.services.invoice_service import InvoiceService
 router = APIRouter(prefix="/invoices", tags=["invoices"])
 
 
-Pagination = Annotated[int, Query(ge=1)]
+Pagination = int
 
 
 @router.post("/stage")

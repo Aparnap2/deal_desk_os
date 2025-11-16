@@ -6,7 +6,7 @@ from app.core.config import get_settings
 from app.core.logging import configure_logging, get_logger
 from app.db.session import lifespan
 from app.services.guardrail_service import initialize_policy_service
-from app.db.session import SessionLocal
+from app.db.session import async_session_factory
 
 
 configure_logging()
@@ -42,7 +42,7 @@ def create_application() -> FastAPI:
         logger.info("application.startup", environment=settings.environment)
 
         # Initialize policy service for guardrail integration
-        db = SessionLocal()
+        db = async_session_factory()
         try:
             initialize_policy_service(db)
             logger.info("policy_service.initialized")

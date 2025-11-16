@@ -22,6 +22,7 @@ dependencies = [
     "orjson>=3.10,<4",
     "stripe[async]>=13.0,<14",
     "python-multipart>=0.0.20",
+    "psutil>=7.1.3",
 ]
 
 [project.optional-dependencies]
@@ -55,3 +56,10 @@ plugins = ["pydantic.mypy"]
 line-length = 100
 target-version = "py310"
 exclude = ["client"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.27.2",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=0.23.8",
+]

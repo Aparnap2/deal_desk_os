@@ -114,7 +114,7 @@ class InvoiceStaging(TimestampMixin, Base):
 
     # Metadata
     created_by: Mapped[str | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    invoice_metadata: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
 
     # Relationships
     deal: Mapped["Deal"] = relationship(back_populates="staged_invoices")
@@ -191,7 +191,7 @@ class Invoice(TimestampMixin, Base):
 
     # Audit trail
     staging_snapshot: Mapped[dict | None] = mapped_column(JSON, nullable=True)
-    metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    invoice_metadata: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
 
     # Relationships
     staging_invoice: Mapped["InvoiceStaging | None"] = relationship(back_populates="final_invoices")
@@ -241,7 +241,7 @@ class InvoiceStagingLineItem(TimestampMixin, Base):
     erp_tax_code: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     # Metadata
-    metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    invoice_metadata: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
 
     # Relationships
     staging_invoice: Mapped["InvoiceStaging"] = relationship(back_populates="line_items")
@@ -304,7 +304,7 @@ class InvoiceStagingTax(TimestampMixin, Base):
     erp_tax_account: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     # Metadata
-    metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    invoice_metadata: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
 
     # Relationships
     staging_invoice: Mapped["InvoiceStaging"] = relationship(back_populates="tax_calculations")
@@ -365,7 +365,7 @@ class AccountingIntegration(Base):
 
     # Metadata
     created_by: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    invoice_metadata: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
 
     # Relationships
     creator: Mapped["User | None"] = relationship()
