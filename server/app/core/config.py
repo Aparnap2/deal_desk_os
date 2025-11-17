@@ -1,3 +1,4 @@
+import os
 from functools import lru_cache
 from typing import List, Optional
 
@@ -18,11 +19,12 @@ class Settings(BaseSettings):
     redis_url: str = Field(default="redis://localhost:6379/0")
     allowed_origins: List[AnyHttpUrl] = Field(default_factory=list)
     
-    # Workflow provider configuration
-    workflow_provider: str = Field(default="custom", description="Workflow provider: 'custom', 'n8n', or 'external'")
-    
-    # n8n integration settings (for backward compatibility)
-    n8n_enabled: bool = Field(default=False, description="Legacy flag for n8n enablement")
+    # Workflow provider configuration (CODE-FIRST by default)
+    workflow_provider: str = Field(default="custom", description="Workflow provider: 'custom', 'n8n', or 'external'. Default: 'custom' for code-first approach")
+
+    # Optional n8n integration (only used when workflow_provider='n8n' or USE_N8N=true)
+    use_n8n: bool = Field(default=False, description="Enable n8n workflow integration (optional)")
+    n8n_enabled: bool = Field(default=False, description="Legacy flag for n8n enablement (deprecated - use use_n8n)")
     n8n_webhook_url: Optional[str] = Field(default=None, description="n8n webhook URL")
     n8n_api_key: Optional[str] = Field(default=None, description="n8n API key")
     n8n_signature_secret: Optional[str] = Field(default=None, description="n8n signature secret")
@@ -53,28 +55,37 @@ class Settings(BaseSettings):
                 f"workflow_provider must be one of {allowed_providers}, got '{workflow_provider}'"
             )
         
-        # Backward compatibility: only override if workflow_provider is not explicitly set
-        # This preserves explicit user choices
-        if (data.get("n8n_enabled", False) and 
-            workflow_provider == "custom" and 
+        # Support USE_N8N=true and use_n8n=true for easy n8n activation
+        use_n8n = data.get("use_n8n", False) or data.get("n8n_enabled", False) or os.getenv("USE_N8N", "").lower() in ("true", "1", "yes")
+
+        # Auto-switch to n8n if USE_N8N=true and workflow_provider is still default
+        if (use_n8n and
+            workflow_provider == "custom" and
             "workflow_provider" not in data):
             data["workflow_provider"] = "n8n"
             workflow_provider = "n8n"
         
-        # When workflow_provider is 'n8n', ensure required settings are present
-        if workflow_provider == "n8n":
+        # When workflow_provider is 'n8n' AND it's actually being used, ensure required settings are present
+        if workflow_provider == "n8n" and use_n8n:
             required_settings = ["n8n_webhook_url", "n8n_api_key", "n8n_signature_secret"]
             missing_settings = []
-            
+
             for setting_name in required_settings:
                 setting_value = data.get(setting_name)
                 if not setting_value or (isinstance(setting_value, str) and setting_value.strip() == ""):
                     missing_settings.append(setting_name)
-            
+
             if missing_settings:
                 raise ValueError(
-                    f"When workflow_provider='n8n', the following settings are required: {', '.join(missing_settings)}"
+                    f"When workflow_provider='n8n' and use_n8n=true, the following settings are required: {', '.join(missing_settings)}"
                 )
+
+        # If n8n is configured but not being used, warn and force back to custom
+        if workflow_provider == "n8n" and not use_n8n:
+            logger.warning(
+                f"workflow_provider='n8n' specified but use_n8n=false. Defaulting to 'custom' (code-first approach)"
+            )
+            data["workflow_provider"] = "custom"
         
         return data
 

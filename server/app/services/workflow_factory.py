@@ -47,29 +47,33 @@ class WorkflowEngineFactory:
     ) -> WorkflowEngine:
         """
         Create a workflow engine instance based on the specified type and configuration.
-        
+
+        CODE-FIRST APPROACH: Defaults to custom engine unless explicitly set to n8n
+
         Args:
             engine_type: The type of workflow engine to create. If None, uses default from config.
             config: Optional configuration dictionary for the engine
-            
+
         Returns:
             WorkflowEngine: The created workflow engine instance
-            
+
         Raises:
             ValueError: If the specified engine type is not supported
         """
         if engine_type is None:
             engine_type = getattr(self.settings, 'workflow_provider', 'custom')
-        
+
         if config is None:
             config = getattr(self.settings, 'workflow_engine_config', {})
 
         logger.info(
-            "Creating workflow engine",
+            "Creating workflow engine (CODE-FIRST by default)",
             engine_type=engine_type,
             config_keys=list(config.keys()),
+            use_n8n=getattr(self.settings, 'use_n8n', False),
         )
 
+        # Code-first approach: Only use n8n if explicitly configured
         if engine_type.lower() == 'custom':
             return self._create_custom_engine(config)
         elif engine_type.lower() == 'n8n':
@@ -77,7 +81,11 @@ class WorkflowEngineFactory:
         elif engine_type.lower() == 'external':
             return self._create_external_engine(config)
         else:
-            raise ValueError(f"Unsupported workflow engine type: {engine_type}")
+            # Default to custom for any unrecognized type (code-first approach)
+            logger.warning(
+                f"Unknown workflow engine type '{engine_type}', defaulting to custom (code-first approach)"
+            )
+            return self._create_custom_engine(config)
 
     def _create_custom_engine(self, config: Dict[str, Any]) -> CustomWorkflowEngine:
         """
