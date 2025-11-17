@@ -80,7 +80,7 @@ const PolicyEditor: React.FC<PolicyEditorProps> = ({ policyId }) => {
 
   const isEditing = Boolean(actualPolicyId);
 
-  const { policy, loading: policyLoading, error: policyError, fetchPolicy } = usePolicy(actualPolicyId);
+  const { policy, loading: policyLoading, error: policyError, fetchPolicy } = usePolicy(actualPolicyId || null);
   const { templates, loading: templatesLoading } = usePolicyTemplates();
   const { validateConfiguration, validating, error: validationError } = usePolicyValidation();
 
@@ -271,32 +271,35 @@ const PolicyEditor: React.FC<PolicyEditorProps> = ({ policyId }) => {
         </Box>
 
         <TabPanel value={tabValue} index={0}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Policy Name"
-                value={formData.name}
-                onChange={(e) => handleFieldChange('name', e.target.value)}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <FormControl fullWidth required>
-                <InputLabel>Policy Type</InputLabel>
-                <Select
-                  value={formData.policy_type}
-                  onChange={(e) => handleFieldChange('policy_type', e.target.value)}
-                >
-                  {Object.values(PolicyType).map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type.replace('_', ' ').toUpperCase()}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
+          <Box display="flex" flexDirection="column" gap={3}>
+            <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
+              <Box flex={1}>
+                <TextField
+                  fullWidth
+                  label="Policy Name"
+                  value={formData.name}
+                  onChange={(e) => handleFieldChange('name', e.target.value)}
+                  required
+                />
+              </Box>
+              <Box flex={1}>
+                <FormControl fullWidth required>
+                  <InputLabel>Policy Type</InputLabel>
+                  <Select
+                    value={formData.policy_type}
+                    onChange={(e) => handleFieldChange('policy_type', e.target.value)}
+                  >
+                    {Object.values(PolicyType).map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type.replace('_', ' ').toUpperCase()}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Box>
+
+            <Box>
               <TextField
                 fullWidth
                 label="Description"
@@ -305,34 +308,38 @@ const PolicyEditor: React.FC<PolicyEditorProps> = ({ policyId }) => {
                 multiline
                 rows={3}
               />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Priority"
-                type="number"
-                value={formData.priority}
-                onChange={(e) => handleFieldChange('priority', parseInt(e.target.value))}
-                helperText="Higher priority policies override lower ones"
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <DatePicker
-                label="Effective Date"
-                value={formData.effective_at ? new Date(formData.effective_at) : null}
-                onChange={(date) => handleFieldChange('effective_at', date?.toISOString())}
-                slotProps={{ textField: { fullWidth: true } }}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <DatePicker
-                label="Expiration Date"
-                value={formData.expires_at ? new Date(formData.expires_at) : null}
-                onChange={(date) => handleFieldChange('expires_at', date?.toISOString())}
-                slotProps={{ textField: { fullWidth: true } }}
-              />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+
+            <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
+              <Box flex={1}>
+                <TextField
+                  fullWidth
+                  label="Priority"
+                  type="number"
+                  value={formData.priority}
+                  onChange={(e) => handleFieldChange('priority', parseInt(e.target.value))}
+                  helperText="Higher priority policies override lower ones"
+                />
+              </Box>
+              <Box flex={1}>
+                <DatePicker
+                  label="Effective Date"
+                  value={formData.effective_at ? new Date(formData.effective_at) : null}
+                  onChange={(date: Date | null) => handleFieldChange('effective_at', date?.toISOString())}
+                  slotProps={{ textField: { fullWidth: true } }}
+                />
+              </Box>
+              <Box flex={1}>
+                <DatePicker
+                  label="Expiration Date"
+                  value={formData.expires_at ? new Date(formData.expires_at) : null}
+                  onChange={(date: Date | null) => handleFieldChange('expires_at', date?.toISOString())}
+                  slotProps={{ textField: { fullWidth: true } }}
+                />
+              </Box>
+            </Box>
+
+            <Box>
               <Typography variant="subtitle2" gutterBottom>
                 Tags
               </Typography>
@@ -363,10 +370,10 @@ const PolicyEditor: React.FC<PolicyEditorProps> = ({ policyId }) => {
                   Add
                 </Button>
               </Box>
-            </Grid>
+            </Box>
 
             {/* Template Selection */}
-            <Grid item xs={12}>
+            <Box>
               <Divider sx={{ my: 2 }} />
               <Typography variant="subtitle1" gutterBottom>
                 Start from Template
@@ -388,8 +395,8 @@ const PolicyEditor: React.FC<PolicyEditorProps> = ({ policyId }) => {
                     ))}
                 </Select>
               </FormControl>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </TabPanel>
 
         <TabPanel value={tabValue} index={1}>

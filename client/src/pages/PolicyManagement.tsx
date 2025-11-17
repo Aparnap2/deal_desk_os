@@ -85,9 +85,9 @@ const PolicyManagement: React.FC = () => {
       </AppBar>
 
       <Box sx={{ p: 3 }}>
-        <Grid container spacing={3}>
+        <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
           {/* Filters */}
-          <Grid item xs={12} md={3}>
+          <Box sx={{ minWidth: { xs: '100%', md: '300px' } }}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 Filters
@@ -167,10 +167,10 @@ const PolicyManagement: React.FC = () => {
                 Advanced Filters
               </Button>
             </Paper>
-          </Grid>
+          </Box>
 
           {/* Policy List */}
-          <Grid item xs={12} md={9}>
+          <Box flex={1}>
             <Alert severity="info" sx={{ mb: 2 }}>
               <Typography variant="body2">
                 Welcome to the Policy Management interface. Here you can create, edit, and manage
@@ -179,8 +179,8 @@ const PolicyManagement: React.FC = () => {
             </Alert>
 
             <PolicyList filters={filters as any} />
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

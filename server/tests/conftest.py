@@ -18,7 +18,7 @@ from sqlalchemy.orm import sessionmaker
 from app.main import app
 from app.core.config import get_settings
 from app.models.deal import Deal, DealRisk, DealStage, GuardrailStatus
-from app.models.invoice import Invoice, InvoiceStatus, InvoiceType
+from app.models.invoice import Invoice, InvoiceStatus
 from app.models.payment import Payment, PaymentStatus
 from app.models.policy import Policy, PolicyStatus, PolicyType
 from app.models.user import User, UserRole
